@@ -7,10 +7,23 @@
  * active. Icon, name and accent colour morph along with it.
  */
 
-import { LitElement, html, css } from "lit";
-import { normalizeDevice, pickActiveDevice, buildServiceCall, DOMAIN_ICONS } from "./logic.js";
+import { LitElement, html, css, nothing } from "lit";
+import {
+  normalizeDevice,
+  pickActiveDevice,
+  resolveDevice,
+  availableButtons,
+  buildServiceCall,
+  customCall,
+  DOMAIN_ICONS,
+  DPAD_KEYS,
+} from "./logic.js";
+import "./editor.js";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
+const REPEAT_DELAY = 400;
+const REPEAT_INTERVAL = 150;
+const REPEATABLE = new Set(["volume_up", "volume_down", "up", "down", "left", "right"]);
 
 class OmniRemoteCard extends LitElement {
   static get properties() {
@@ -21,10 +34,16 @@ class OmniRemoteCard extends LitElement {
     };
   }
 
+  static getConfigElement() {
+    return document.createElement("omni-remote-card-editor");
+  }
+
   static getStubConfig(hass) {
-    const players = Object.keys((hass && hass.states) || {})
+    const states = (hass && hass.states) || {};
+    const players = Object.keys(states)
       .filter((id) => id.startsWith("media_player."))
-      .slice(0, 2);
+      .sort((a, b) => (states[a].state === "playing" ? -1 : 0) - (states[b].state === "playing" ? -1 : 0))
+      .slice(0, 3);
     return { entities: players.length ? players : ["media_player.living_room_tv"] };
   }
 
@@ -35,6 +54,8 @@ class OmniRemoteCard extends LitElement {
     this._config = {
       show_chips: true,
       show_artwork: true,
+      show_volume_slider: true,
+      show_source: true,
       ...config,
       devices: config.entities.map(normalizeDevice),
     };
@@ -44,7 +65,12 @@ class OmniRemoteCard extends LitElement {
   }
 
   getCardSize() {
-    return 6;
+    return 7;
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._stopRepeat();
   }
 
   get _active() {
@@ -52,13 +78,32 @@ class OmniRemoteCard extends LitElement {
     return pickActiveDevice(this._config.devices, this.hass.states, { pinned: this._pinned });
   }
 
-  _press(action, ev) {
-    if (ev) ev.stopPropagation();
-    // Resolve the target at tap time so a device switch between render and tap is respected.
-    const call = buildServiceCall(action, this._active, this.hass.states);
+  _call(call) {
     if (!call) return;
     this.hass.callService(call.domain, call.service, call.data);
     if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  // Resolve the target at tap time so a device switch between render and tap is respected.
+  _press(action, value) {
+    this._call(buildServiceCall(action, this._active, this.hass, value));
+  }
+
+  _pointerDown(action, ev) {
+    if (ev.button !== undefined && ev.button !== 0) return;
+    ev.preventDefault();
+    this._press(action);
+    if (!REPEATABLE.has(action)) return;
+    this._stopRepeat();
+    this._repeatTimer = setTimeout(() => {
+      this._repeatTimer = setInterval(() => this._press(action), REPEAT_INTERVAL);
+    }, REPEAT_DELAY);
+  }
+
+  _stopRepeat() {
+    clearTimeout(this._repeatTimer);
+    clearInterval(this._repeatTimer);
+    this._repeatTimer = undefined;
   }
 
   _togglePin(entity) {
@@ -84,105 +129,178 @@ class OmniRemoteCard extends LitElement {
     return device.icon || (st && st.attributes.icon) || DOMAIN_ICONS[cls] || "mdi:remote";
   }
 
-  _button(action, icon, label, extraClass = "") {
+  _button(show, action, icon, label, extraClass = "") {
+    if (!show.has(action)) return nothing;
     return html`
       <button class="btn ${extraClass}" title=${label} aria-label=${label}
-        @click=${(ev) => this._press(action, ev)}>
+        @pointerdown=${(ev) => this._pointerDown(action, ev)}
+        @pointerup=${this._stopRepeat} @pointerleave=${this._stopRepeat} @pointercancel=${this._stopRepeat}
+        @click=${(ev) => ev.detail === 0 && this._press(action)}>
         <ha-icon .icon=${icon}></ha-icon>
       </button>
     `;
   }
 
+  _row(show, keys, cls, content) {
+    if (!keys.some((k) => show.has(k))) return nothing;
+    return html`<div class="row ${cls}">${content()}</div>`;
+  }
+
+  _renderMissing() {
+    const missing = this._config.devices.filter((d) => !this.hass.states[d.entity]);
+    if (!missing.length) return nothing;
+    return html`
+      <div class="warning">
+        Not found: ${missing.map((d) => d.entity).join(", ")}.
+        Check the exact id under Settings, Devices &amp; services, Entities.
+      </div>
+    `;
+  }
+
+  _renderChips(device) {
+    if (!this._config.show_chips || this._config.devices.length < 2) return nothing;
+    return html`
+      <div class="chips">
+        ${this._config.devices.map((d) => {
+          const ds = this.hass.states[d.entity];
+          const live = ds && ["playing", "buffering"].includes(ds.state);
+          const pinned = this._pinned === d.entity;
+          const classes = ["chip", d.entity === device.entity ? "active" : "", live ? "live" : ""].join(" ");
+          return html`
+            <button class=${classes} style="--chip-color: ${d.color || "var(--primary-color)"}"
+              title=${pinned ? "Tap to return to automatic" : "Tap to lock the remote to this device"}
+              @click=${() => this._togglePin(d.entity)}>
+              <ha-icon .icon=${this._deviceIcon(d)}></ha-icon>
+              <span>${this._deviceName(d)}</span>
+              ${pinned ? html`<ha-icon class="lock" icon="mdi:lock"></ha-icon>` : nothing}
+            </button>
+          `;
+        })}
+      </div>
+    `;
+  }
+
+  _renderExtras(device, show, attrs) {
+    const slider = this._config.show_volume_slider && show.has("volume_set");
+    const source = this._config.show_source && show.has("source");
+    if (!slider && !source) return nothing;
+    const volState = this.hass.states[device.volume_entity || device.entity];
+    const level = Math.round(((volState && volState.attributes.volume_level) || 0) * 100);
+    return html`
+      <div class="extras">
+        ${slider
+          ? html`
+              <label class="slider">
+                <ha-icon icon="mdi:volume-medium"></ha-icon>
+                <input type="range" min="0" max="100" .value=${String(level)} aria-label="Volume"
+                  @change=${(ev) => this._press("volume_set", ev.target.value / 100)}>
+                <span class="level">${level}</span>
+              </label>
+            `
+          : nothing}
+        ${source
+          ? html`
+              <label class="source">
+                <ha-icon icon="mdi:import"></ha-icon>
+                <select aria-label="Source" @change=${(ev) => this._press("source", ev.target.value)}>
+                  ${attrs.source ? nothing : html`<option value="" selected disabled>Source</option>`}
+                  ${attrs.source_list.map(
+                    (s) => html`<option value=${s} ?selected=${s === attrs.source}>${s}</option>`
+                  )}
+                </select>
+              </label>
+            `
+          : nothing}
+      </div>
+    `;
+  }
+
+  _renderCustomButtons(device) {
+    const buttons = [...(device.buttons || []), ...(this._config.buttons || [])];
+    if (!buttons.length) return nothing;
+    return html`
+      <div class="row custom">
+        ${buttons.map(
+          (b) => html`
+            <button class="btn small" title=${b.name || ""} aria-label=${b.name || b.icon || "Action"}
+              @click=${() => this._call(customCall(b))}>
+              ${b.icon ? html`<ha-icon .icon=${b.icon}></ha-icon>` : html`<span>${b.name}</span>`}
+            </button>
+          `
+        )}
+      </div>
+    `;
+  }
+
   render() {
-    if (!this._config || !this.hass) return html``;
+    if (!this._config || !this.hass) return nothing;
     const device = this._active;
     const st = this.hass.states[device.entity];
     const state = st ? st.state : "unavailable";
     const attrs = (st && st.attributes) || {};
-    const isOn = st && !["off", "standby", "unavailable", "unknown"].includes(state);
+    const isOn = !!st && !["off", "standby", "unavailable", "unknown"].includes(state);
     const accent = device.color || this._config.color || "var(--primary-color)";
     const artwork = this._config.show_artwork && isOn && attrs.entity_picture;
     const title = attrs.media_title;
     const subtitle = attrs.media_artist || attrs.media_series_title || attrs.app_name || attrs.source;
-    const hasDpad = !!device.remote;
+    const resolved = resolveDevice(device, this.hass);
+    const show = availableButtons(device, this.hass, resolved);
     const volumeState = this.hass.states[device.volume_entity || device.entity];
     const muted = volumeState && volumeState.attributes.is_volume_muted;
     const playing = state === "playing" || state === "buffering";
+    const b = (...args) => this._button(show, ...args);
 
     return html`
       <ha-card style="--omni-accent: ${accent}">
-        ${artwork ? html`<div class="art" style="background-image:url('${attrs.entity_picture}')"></div>` : ""}
+        ${artwork ? html`<div class="art" style="background-image:url('${attrs.entity_picture}')"></div>` : nothing}
         <div class="content">
-          <div class="header" @click=${this._moreInfo}>
-            <div class="badge ${isOn ? "on" : ""}">
+          ${this._renderMissing()}
+          <div class="header">
+            <div class="badge ${isOn ? "on" : ""}" @click=${this._moreInfo}>
               <ha-icon .icon=${this._deviceIcon(device)}></ha-icon>
             </div>
-            <div class="info">
+            <div class="info" @click=${this._moreInfo}>
               <div class="name">${this._deviceName(device)}</div>
               <div class="media">
                 ${title ? html`<span class="title">${title}</span>` : html`<span class="state">${state}</span>`}
-                ${subtitle ? html`<span class="sub">${subtitle}</span>` : ""}
+                ${subtitle ? html`<span class="sub">${subtitle}</span>` : nothing}
               </div>
             </div>
-            <button class="btn power ${isOn ? "on" : ""}" aria-label="Power"
-              @click=${(ev) => this._press("power", ev)}>
-              <ha-icon icon="mdi:power"></ha-icon>
-            </button>
+            ${b("power", "mdi:power", "Power", `power ${isOn ? "on" : ""}`)}
           </div>
 
-          ${this._config.show_chips && this._config.devices.length > 1
-            ? html`
-                <div class="chips">
-                  ${this._config.devices.map((d) => {
-                    const ds = this.hass.states[d.entity];
-                    const live = ds && ["playing", "buffering"].includes(ds.state);
-                    const classes = [
-                      "chip",
-                      d.entity === device.entity ? "active" : "",
-                      this._pinned === d.entity ? "pinned" : "",
-                      live ? "live" : "",
-                    ].join(" ");
-                    return html`
-                      <button class=${classes} style="--chip-color: ${d.color || "var(--primary-color)"}"
-                        title=${this._pinned === d.entity ? "Tap to return to automatic" : "Tap to lock the remote to this device"}
-                        @click=${() => this._togglePin(d.entity)}>
-                        <ha-icon .icon=${this._deviceIcon(d)}></ha-icon>
-                        <span>${this._deviceName(d)}</span>
-                        ${this._pinned === d.entity ? html`<ha-icon class="lock" icon="mdi:lock"></ha-icon>` : ""}
-                      </button>
-                    `;
-                  })}
-                </div>
-              `
-            : ""}
+          ${this._renderChips(device)}
 
-          ${hasDpad
+          ${DPAD_KEYS.some((k) => show.has(k))
             ? html`
                 <div class="dpad">
-                  ${this._button("up", "mdi:chevron-up", "Up", "up")}
-                  ${this._button("left", "mdi:chevron-left", "Left", "left")}
-                  ${this._button("select", "mdi:circle-medium", "Select", "ok")}
-                  ${this._button("right", "mdi:chevron-right", "Right", "right")}
-                  ${this._button("down", "mdi:chevron-down", "Down", "down")}
+                  ${b("up", "mdi:chevron-up", "Up", "up")}
+                  ${b("left", "mdi:chevron-left", "Left", "left")}
+                  ${b("select", "mdi:circle-medium", "Select", "ok")}
+                  ${b("right", "mdi:chevron-right", "Right", "right")}
+                  ${b("down", "mdi:chevron-down", "Down", "down")}
                 </div>
-                <div class="row">
-                  ${this._button("back", "mdi:arrow-left", "Back")}
-                  ${this._button("home", "mdi:home", "Home")}
-                </div>
+                ${this._row(show, ["back", "home", "menu"], "", () => html`
+                  ${b("back", "mdi:arrow-left", "Back")}
+                  ${b("home", "mdi:home", "Home")}
+                  ${b("menu", "mdi:menu", "Menu")}
+                `)}
               `
-            : ""}
+            : nothing}
 
-          <div class="row transport">
-            ${this._button("previous", "mdi:skip-previous", "Previous")}
-            ${this._button("play_pause", playing ? "mdi:pause" : "mdi:play", "Play or pause", "primary")}
-            ${this._button("next", "mdi:skip-next", "Next")}
-          </div>
+          ${this._row(show, ["previous", "play_pause", "next"], "transport", () => html`
+            ${b("previous", "mdi:skip-previous", "Previous")}
+            ${b("play_pause", playing ? "mdi:pause" : "mdi:play", "Play or pause", "primary")}
+            ${b("next", "mdi:skip-next", "Next")}
+          `)}
+          ${this._row(show, ["volume_down", "mute", "volume_up"], "volume", () => html`
+            ${b("volume_down", "mdi:volume-minus", "Volume down")}
+            ${b("mute", muted ? "mdi:volume-off" : "mdi:volume-high", "Mute", muted ? "muted" : "")}
+            ${b("volume_up", "mdi:volume-plus", "Volume up")}
+          `)}
 
-          <div class="row volume">
-            ${this._button("volume_down", "mdi:volume-minus", "Volume down")}
-            ${this._button("mute", muted ? "mdi:volume-off" : "mdi:volume-high", "Mute", muted ? "muted" : "")}
-            ${this._button("volume_up", "mdi:volume-plus", "Volume up")}
-          </div>
+          ${this._renderExtras(device, show, attrs)}
+          ${this._renderCustomButtons(device)}
         </div>
       </ha-card>
     `;
@@ -214,11 +332,16 @@ class OmniRemoteCard extends LitElement {
         flex-direction: column;
         gap: 16px;
       }
+      .warning {
+        font-size: 0.85em;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--warning-color, #ffa600) 18%, transparent);
+      }
       .header {
         display: flex;
         align-items: center;
         gap: 12px;
-        cursor: pointer;
       }
       .badge {
         flex: none;
@@ -227,6 +350,7 @@ class OmniRemoteCard extends LitElement {
         border-radius: 50%;
         display: grid;
         place-items: center;
+        cursor: pointer;
         background: color-mix(in srgb, var(--omni-accent) 15%, transparent);
         color: var(--secondary-text-color);
         transition: background 0.4s ease, color 0.4s ease;
@@ -238,6 +362,7 @@ class OmniRemoteCard extends LitElement {
       .info {
         flex: 1;
         min-width: 0;
+        cursor: pointer;
       }
       .name {
         font-size: 1.1em;
@@ -301,6 +426,8 @@ class OmniRemoteCard extends LitElement {
         display: grid;
         place-items: center;
         cursor: pointer;
+        touch-action: manipulation;
+        user-select: none;
         transition: background 0.2s ease, transform 0.1s ease, color 0.4s ease;
         -webkit-tap-highlight-color: transparent;
       }
@@ -327,9 +454,19 @@ class OmniRemoteCard extends LitElement {
       .btn.muted {
         color: var(--error-color, #db4437);
       }
+      .btn.small {
+        width: 44px;
+        height: 44px;
+        font: inherit;
+        font-size: 0.75em;
+      }
       .row {
         display: flex;
         justify-content: space-evenly;
+      }
+      .custom {
+        flex-wrap: wrap;
+        gap: 8px;
       }
       .dpad {
         display: grid;
@@ -347,6 +484,35 @@ class OmniRemoteCard extends LitElement {
       .dpad .ok { grid-area: 2 / 2; }
       .dpad .right { grid-area: 2 / 3; }
       .dpad .down { grid-area: 3 / 2; }
+      .extras {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .extras label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--secondary-text-color);
+      }
+      .slider input {
+        flex: 1;
+        accent-color: var(--omni-accent);
+      }
+      .level {
+        width: 2.5em;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .source select {
+        flex: 1;
+        padding: 6px 8px;
+        border-radius: 8px;
+        border: 1px solid var(--divider-color);
+        background: var(--card-background-color, transparent);
+        color: var(--primary-text-color);
+        font: inherit;
+      }
     `;
   }
 }
@@ -359,6 +525,7 @@ if (!customElements.get("omni-remote-card")) {
     name: "Omni Remote",
     description: "One remote that follows whichever media player is active.",
     preview: true,
+    documentationURL: "https://github.com/PeterSlijkhuis/Omni-Remote",
   });
   console.info(`%c OMNI-REMOTE-CARD %c ${VERSION} `, "background:#222;color:#fff", "background:#03a9f4;color:#fff");
 }

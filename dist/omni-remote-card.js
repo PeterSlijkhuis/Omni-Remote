@@ -1,73 +1,171 @@
-var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,D=Symbol(),Y=new WeakMap,E=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==D)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o,e=this.t;if(T&&t===void 0){let i=e!==void 0&&e.length===1;i&&(t=Y.get(e)),t===void 0&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&Y.set(e,t))}return t}toString(){return this.cssText}},tt=o=>new E(typeof o=="string"?o:o+"",void 0,D),I=(o,...t)=>{let e=o.length===1?o[0]:t.reduce((i,s,n)=>i+(r=>{if(r._$cssResult$===!0)return r.cssText;if(typeof r=="number")return r;throw Error("Value passed to 'css' function must be a 'css' function result: "+r+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+o[n+1],o[0]);return new E(e,o,D)},et=(o,t)=>{if(T)o.adoptedStyleSheets=t.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(let e of t){let i=document.createElement("style"),s=M.litNonce;s!==void 0&&i.setAttribute("nonce",s),i.textContent=e.cssText,o.appendChild(i)}},L=T?o=>o:o=>o instanceof CSSStyleSheet?(t=>{let e="";for(let i of t.cssRules)e+=i.cssText;return tt(e)})(o):o;var{is:xt,defineProperty:St,getOwnPropertyDescriptor:Et,getOwnPropertyNames:Ct,getOwnPropertySymbols:kt,getPrototypeOf:Pt}=Object,R=globalThis,it=R.trustedTypes,Ot=it?it.emptyScript:"",Nt=R.reactiveElementPolyfillSupport,C=(o,t)=>o,z={toAttribute(o,t){switch(t){case Boolean:o=o?Ot:null;break;case Object:case Array:o=o==null?o:JSON.stringify(o)}return o},fromAttribute(o,t){let e=o;switch(t){case Boolean:e=o!==null;break;case Number:e=o===null?null:Number(o);break;case Object:case Array:try{e=JSON.parse(o)}catch{e=null}}return e}},ot=(o,t)=>!xt(o,t),st={attribute:!0,type:String,converter:z,reflect:!1,useDefault:!1,hasChanged:ot};Symbol.metadata??=Symbol("metadata"),R.litPropertyMetadata??=new WeakMap;var $=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=st){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){let i=Symbol(),s=this.getPropertyDescriptor(t,i,e);s!==void 0&&St(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){let{get:s,set:n}=Et(this.prototype,t)??{get(){return this[e]},set(r){this[e]=r}};return{get:s,set(r){let l=s?.call(this);n?.call(this,r),this.requestUpdate(t,l,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??st}static _$Ei(){if(this.hasOwnProperty(C("elementProperties")))return;let t=Pt(this);t.finalize(),t.l!==void 0&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(C("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(C("properties"))){let e=this.properties,i=[...Ct(e),...kt(e)];for(let s of i)this.createProperty(s,e[s])}let t=this[Symbol.metadata];if(t!==null){let e=litPropertyMetadata.get(t);if(e!==void 0)for(let[i,s]of e)this.elementProperties.set(i,s)}this._$Eh=new Map;for(let[e,i]of this.elementProperties){let s=this._$Eu(e,i);s!==void 0&&this._$Eh.set(s,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){let e=[];if(Array.isArray(t)){let i=new Set(t.flat(1/0).reverse());for(let s of i)e.unshift(L(s))}else t!==void 0&&e.push(L(t));return e}static _$Eu(t,e){let i=e.attribute;return i===!1?void 0:typeof i=="string"?i:typeof t=="string"?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),this.renderRoot!==void 0&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){let t=new Map,e=this.constructor.elementProperties;for(let i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){let t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return et(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){let i=this.constructor.elementProperties.get(t),s=this.constructor._$Eu(t,i);if(s!==void 0&&i.reflect===!0){let n=(i.converter?.toAttribute!==void 0?i.converter:z).toAttribute(e,i.type);this._$Em=t,n==null?this.removeAttribute(s):this.setAttribute(s,n),this._$Em=null}}_$AK(t,e){let i=this.constructor,s=i._$Eh.get(t);if(s!==void 0&&this._$Em!==s){let n=i.getPropertyOptions(s),r=typeof n.converter=="function"?{fromAttribute:n.converter}:n.converter?.fromAttribute!==void 0?n.converter:z;this._$Em=s;let l=r.fromAttribute(e,n.type);this[s]=l??this._$Ej?.get(s)??l,this._$Em=null}}requestUpdate(t,e,i,s=!1,n){if(t!==void 0){let r=this.constructor;if(s===!1&&(n=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??ot)(n,e)||i.useDefault&&i.reflect&&n===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:s,wrapped:n},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),n!==!0||r!==void 0)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),s===!0&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}let t=this.scheduleUpdate();return t!=null&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[s,n]of this._$Ep)this[s]=n;this._$Ep=void 0}let i=this.constructor.elementProperties;if(i.size>0)for(let[s,n]of i){let{wrapped:r}=n,l=this[s];r!==!0||this._$AL.has(s)||l===void 0||this.C(s,void 0,n,l)}}let t=!1,e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(i=>i.hostUpdate?.()),this.update(e)):this._$EM()}catch(i){throw t=!1,this._$EM(),i}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(t){}firstUpdated(t){}};$.elementStyles=[],$.shadowRootOptions={mode:"open"},$[C("elementProperties")]=new Map,$[C("finalized")]=new Map,Nt?.({ReactiveElement:$}),(R.reactiveElementVersions??=[]).push("2.1.2");var K=globalThis,nt=o=>o,H=K.trustedTypes,rt=H?H.createPolicy("lit-html",{createHTML:o=>o}):void 0,pt="$lit$",v=`lit$${Math.random().toFixed(9).slice(2)}$`,ut="?"+v,Ut=`<${ut}>`,A=document,P=()=>A.createComment(""),O=o=>o===null||typeof o!="object"&&typeof o!="function",J=Array.isArray,Mt=o=>J(o)||typeof o?.[Symbol.iterator]=="function",j=`[ 	
-\f\r]`,k=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,at=/-->/g,ct=/>/g,y=RegExp(`>|${j}(?:([^\\s"'>=/]+)(${j}*=${j}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),lt=/'/g,ht=/"/g,mt=/^(?:script|style|textarea|title)$/i,Z=o=>(t,...e)=>({_$litType$:o,strings:t,values:e}),_=Z(1),Vt=Z(2),Wt=Z(3),w=Symbol.for("lit-noChange"),p=Symbol.for("lit-nothing"),dt=new WeakMap,b=A.createTreeWalker(A,129);function _t(o,t){if(!J(o)||!o.hasOwnProperty("raw"))throw Error("invalid template strings array");return rt!==void 0?rt.createHTML(t):t}var Tt=(o,t)=>{let e=o.length-1,i=[],s,n=t===2?"<svg>":t===3?"<math>":"",r=k;for(let l=0;l<e;l++){let a=o[l],h,d,c=-1,m=0;for(;m<a.length&&(r.lastIndex=m,d=r.exec(a),d!==null);)m=r.lastIndex,r===k?d[1]==="!--"?r=at:d[1]!==void 0?r=ct:d[2]!==void 0?(mt.test(d[2])&&(s=RegExp("</"+d[2],"g")),r=y):d[3]!==void 0&&(r=y):r===y?d[0]===">"?(r=s??k,c=-1):d[1]===void 0?c=-2:(c=r.lastIndex-d[2].length,h=d[1],r=d[3]===void 0?y:d[3]==='"'?ht:lt):r===ht||r===lt?r=y:r===at||r===ct?r=k:(r=y,s=void 0);let f=r===y&&o[l+1].startsWith("/>")?" ":"";n+=r===k?a+Ut:c>=0?(i.push(h),a.slice(0,c)+pt+a.slice(c)+v+f):a+v+(c===-2?l:f)}return[_t(o,n+(o[e]||"<?>")+(t===2?"</svg>":t===3?"</math>":"")),i]},N=class o{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let n=0,r=0,l=t.length-1,a=this.parts,[h,d]=Tt(t,e);if(this.el=o.createElement(h,i),b.currentNode=this.el.content,e===2||e===3){let c=this.el.content.firstChild;c.replaceWith(...c.childNodes)}for(;(s=b.nextNode())!==null&&a.length<l;){if(s.nodeType===1){if(s.hasAttributes())for(let c of s.getAttributeNames())if(c.endsWith(pt)){let m=d[r++],f=s.getAttribute(c).split(v),u=/([.?@])?(.*)/.exec(m);a.push({type:1,index:n,name:u[2],strings:f,ctor:u[1]==="."?V:u[1]==="?"?W:u[1]==="@"?q:S}),s.removeAttribute(c)}else c.startsWith(v)&&(a.push({type:6,index:n}),s.removeAttribute(c));if(mt.test(s.tagName)){let c=s.textContent.split(v),m=c.length-1;if(m>0){s.textContent=H?H.emptyScript:"";for(let f=0;f<m;f++)s.append(c[f],P()),b.nextNode(),a.push({type:2,index:++n});s.append(c[m],P())}}}else if(s.nodeType===8)if(s.data===ut)a.push({type:2,index:n});else{let c=-1;for(;(c=s.data.indexOf(v,c+1))!==-1;)a.push({type:7,index:n}),c+=v.length-1}n++}}static createElement(t,e){let i=A.createElement("template");return i.innerHTML=t,i}};function x(o,t,e=o,i){if(t===w)return t;let s=i!==void 0?e._$Co?.[i]:e._$Cl,n=O(t)?void 0:t._$litDirective$;return s?.constructor!==n&&(s?._$AO?.(!1),n===void 0?s=void 0:(s=new n(o),s._$AT(o,e,i)),i!==void 0?(e._$Co??=[])[i]=s:e._$Cl=s),s!==void 0&&(t=x(o,s._$AS(o,t.values),s,i)),t}var B=class{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){let{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??A).importNode(e,!0);b.currentNode=s;let n=b.nextNode(),r=0,l=0,a=i[0];for(;a!==void 0;){if(r===a.index){let h;a.type===2?h=new U(n,n.nextSibling,this,t):a.type===1?h=new a.ctor(n,a.name,a.strings,this,t):a.type===6&&(h=new F(n,this,t)),this._$AV.push(h),a=i[++l]}r!==a?.index&&(n=b.nextNode(),r++)}return b.currentNode=A,s}p(t){let e=0;for(let i of this._$AV)i!==void 0&&(i.strings!==void 0?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}},U=class o{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=p,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode,e=this._$AM;return e!==void 0&&t?.nodeType===11&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=x(this,t,e),O(t)?t===p||t==null||t===""?(this._$AH!==p&&this._$AR(),this._$AH=p):t!==this._$AH&&t!==w&&this._(t):t._$litType$!==void 0?this.$(t):t.nodeType!==void 0?this.T(t):Mt(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==p&&O(this._$AH)?this._$AA.nextSibling.data=t:this.T(A.createTextNode(t)),this._$AH=t}$(t){let{values:e,_$litType$:i}=t,s=typeof i=="number"?this._$AC(t):(i.el===void 0&&(i.el=N.createElement(_t(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{let n=new B(s,this),r=n.u(this.options);n.p(e),this.T(r),this._$AH=n}}_$AC(t){let e=dt.get(t.strings);return e===void 0&&dt.set(t.strings,e=new N(t)),e}k(t){J(this._$AH)||(this._$AH=[],this._$AR());let e=this._$AH,i,s=0;for(let n of t)s===e.length?e.push(i=new o(this.O(P()),this.O(P()),this,this.options)):i=e[s],i._$AI(n),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){let i=nt(t).nextSibling;nt(t).remove(),t=i}}setConnected(t){this._$AM===void 0&&(this._$Cv=t,this._$AP?.(t))}},S=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,n){this.type=1,this._$AH=p,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=n,i.length>2||i[0]!==""||i[1]!==""?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=p}_$AI(t,e=this,i,s){let n=this.strings,r=!1;if(n===void 0)t=x(this,t,e,0),r=!O(t)||t!==this._$AH&&t!==w,r&&(this._$AH=t);else{let l=t,a,h;for(t=n[0],a=0;a<n.length-1;a++)h=x(this,l[i+a],e,a),h===w&&(h=this._$AH[a]),r||=!O(h)||h!==this._$AH[a],h===p?t=p:t!==p&&(t+=(h??"")+n[a+1]),this._$AH[a]=h}r&&!s&&this.j(t)}j(t){t===p?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}},V=class extends S{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===p?void 0:t}},W=class extends S{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==p)}},q=class extends S{constructor(t,e,i,s,n){super(t,e,i,s,n),this.type=5}_$AI(t,e=this){if((t=x(this,t,e,0)??p)===w)return;let i=this._$AH,s=t===p&&i!==p||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,n=t!==p&&(i===p||s);s&&this.element.removeEventListener(this.name,this,i),n&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}},F=class{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){x(this,t)}};var Rt=K.litHtmlPolyfillSupport;Rt?.(N,U),(K.litHtmlVersions??=[]).push("3.3.3");var ft=(o,t,e)=>{let i=e?.renderBefore??t,s=i._$litPart$;if(s===void 0){let n=e?.renderBefore??null;i._$litPart$=s=new U(t.insertBefore(P(),n),n,void 0,e??{})}return s._$AI(o),s};var G=globalThis,g=class extends ${constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){let e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=ft(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return w}};g._$litElement$=!0,g.finalized=!0,G.litElementHydrateSupport?.({LitElement:g});var Ht=G.litElementPolyfillSupport;Ht?.({LitElement:g});(G.litElementVersions??=[]).push("4.2.2");var $t={up:"up",down:"down",left:"left",right:"right",select:"select",back:"menu",home:"home"},Dt=[["playing","buffering"],["paused"],["on","idle"]],vt={tv:"mdi:television",speaker:"mdi:speaker",receiver:"mdi:audio-video"};function gt(o){let t=typeof o=="string"?{entity:o}:{...o};if(!t.entity||!String(t.entity).startsWith("media_player."))throw new Error(`Omni Remote: every item in "entities" needs a media_player entity (got ${JSON.stringify(o)})`);return t.commands={...$t,...t.commands||{}},t}function yt(o,t,e={}){if(!o||o.length===0)return null;let{pinned:i,tiers:s=Dt}=e;if(i){let n=o.find(r=>r.entity===i);if(n)return n}for(let n of s){let r=o.find(l=>{let a=t&&t[l.entity];return a&&n.includes(a.state)});if(r)return r}return o[0]}function bt(o,t,e){if(!t)return null;let i=t.entity,s=t.volume_entity||i,n=e&&e[s];switch(o){case"power":{let r=e&&e[i];return{domain:"media_player",service:!r||r.state==="off"||r.state==="standby"?"turn_on":"turn_off",data:{entity_id:i}}}case"play_pause":return{domain:"media_player",service:"media_play_pause",data:{entity_id:i}};case"previous":return{domain:"media_player",service:"media_previous_track",data:{entity_id:i}};case"next":return{domain:"media_player",service:"media_next_track",data:{entity_id:i}};case"volume_up":return{domain:"media_player",service:"volume_up",data:{entity_id:s}};case"volume_down":return{domain:"media_player",service:"volume_down",data:{entity_id:s}};case"mute":{let r=!!(n&&n.attributes&&n.attributes.is_volume_muted);return{domain:"media_player",service:"volume_mute",data:{entity_id:s,is_volume_muted:!r}}}case"up":case"down":case"left":case"right":case"select":case"back":case"home":{if(!t.remote)return null;let r=(t.commands||$t)[o];return r?{domain:"remote",service:"send_command",data:{entity_id:t.remote,command:r}}:null}default:return null}}var It="1.0.0",Q=class extends g{static get properties(){return{hass:{attribute:!1},_config:{state:!0},_pinned:{state:!0}}}static getStubConfig(t){let e=Object.keys(t&&t.states||{}).filter(i=>i.startsWith("media_player.")).slice(0,2);return{entities:e.length?e:["media_player.living_room_tv"]}}setConfig(t){if(!t||!Array.isArray(t.entities)||t.entities.length===0)throw new Error('Omni Remote: add at least one media player under "entities"');this._config={show_chips:!0,show_artwork:!0,...t,devices:t.entities.map(gt)},this._pinned&&!this._config.devices.some(e=>e.entity===this._pinned)&&(this._pinned=void 0)}getCardSize(){return 6}get _active(){return!this._config||!this.hass?null:yt(this._config.devices,this.hass.states,{pinned:this._pinned})}_press(t,e){e&&e.stopPropagation();let i=bt(t,this._active,this.hass.states);i&&(this.hass.callService(i.domain,i.service,i.data),navigator.vibrate&&navigator.vibrate(15))}_togglePin(t){this._pinned=this._pinned===t?void 0:t}_moreInfo(){let t=this._active;if(!t)return;let e=new Event("hass-more-info",{bubbles:!0,composed:!0});e.detail={entityId:t.entity},this.dispatchEvent(e)}_deviceName(t){let e=this.hass.states[t.entity];return t.name||e&&e.attributes.friendly_name||t.entity}_deviceIcon(t){let e=this.hass.states[t.entity],i=e&&e.attributes.device_class;return t.icon||e&&e.attributes.icon||vt[i]||"mdi:remote"}_button(t,e,i,s=""){return _`
-      <button class="btn ${s}" title=${i} aria-label=${i}
-        @click=${n=>this._press(t,n)}>
-        <ha-icon .icon=${e}></ha-icon>
-      </button>
-    `}render(){if(!this._config||!this.hass)return _``;let t=this._active,e=this.hass.states[t.entity],i=e?e.state:"unavailable",s=e&&e.attributes||{},n=e&&!["off","standby","unavailable","unknown"].includes(i),r=t.color||this._config.color||"var(--primary-color)",l=this._config.show_artwork&&n&&s.entity_picture,a=s.media_title,h=s.media_artist||s.media_series_title||s.app_name||s.source,d=!!t.remote,c=this.hass.states[t.volume_entity||t.entity],m=c&&c.attributes.is_volume_muted,f=i==="playing"||i==="buffering";return _`
-      <ha-card style="--omni-accent: ${r}">
-        ${l?_`<div class="art" style="background-image:url('${s.entity_picture}')"></div>`:""}
-        <div class="content">
-          <div class="header" @click=${this._moreInfo}>
-            <div class="badge ${n?"on":""}">
-              <ha-icon .icon=${this._deviceIcon(t)}></ha-icon>
+var Me=Object.defineProperty;var De=(o,e,t)=>e in o?Me(o,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):o[e]=t;var F=(o,e,t)=>De(o,typeof e!="symbol"?e+"":e,t);var H=globalThis,I=H.ShadowRoot&&(H.ShadyCSS===void 0||H.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,W=Symbol(),ce=new WeakMap,T=class{constructor(e,t,s){if(this._$cssResult$=!0,s!==W)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o,t=this.t;if(I&&e===void 0){let s=t!==void 0&&t.length===1;s&&(e=ce.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),s&&ce.set(t,e))}return e}toString(){return this.cssText}},le=o=>new T(typeof o=="string"?o:o+"",void 0,W),R=(o,...e)=>{let t=o.length===1?o[0]:e.reduce((s,i,n)=>s+(r=>{if(r._$cssResult$===!0)return r.cssText;if(typeof r=="number")return r;throw Error("Value passed to 'css' function must be a 'css' function result: "+r+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+o[n+1],o[0]);return new T(t,o,W)},de=(o,e)=>{if(I)o.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of e){let s=document.createElement("style"),i=H.litNonce;i!==void 0&&s.setAttribute("nonce",i),s.textContent=t.cssText,o.appendChild(s)}},Y=I?o=>o:o=>o instanceof CSSStyleSheet?(e=>{let t="";for(let s of e.cssRules)t+=s.cssText;return le(t)})(o):o;var{is:Le,defineProperty:He,getOwnPropertyDescriptor:Ie,getOwnPropertyNames:Ve,getOwnPropertySymbols:je,getPrototypeOf:Be}=Object,V=globalThis,he=V.trustedTypes,ze=he?he.emptyScript:"",Ke=V.reactiveElementPolyfillSupport,P=(o,e)=>o,q={toAttribute(o,e){switch(e){case Boolean:o=o?ze:null;break;case Object:case Array:o=o==null?o:JSON.stringify(o)}return o},fromAttribute(o,e){let t=o;switch(e){case Boolean:t=o!==null;break;case Number:t=o===null?null:Number(o);break;case Object:case Array:try{t=JSON.parse(o)}catch{t=null}}return t}},ue=(o,e)=>!Le(o,e),pe={attribute:!0,type:String,converter:q,reflect:!1,useDefault:!1,hasChanged:ue};Symbol.metadata??=Symbol("metadata"),V.litPropertyMetadata??=new WeakMap;var $=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=pe){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){let s=Symbol(),i=this.getPropertyDescriptor(e,s,t);i!==void 0&&He(this.prototype,e,i)}}static getPropertyDescriptor(e,t,s){let{get:i,set:n}=Ie(this.prototype,e)??{get(){return this[t]},set(r){this[t]=r}};return{get:i,set(r){let d=i?.call(this);n?.call(this,r),this.requestUpdate(e,d,s)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??pe}static _$Ei(){if(this.hasOwnProperty(P("elementProperties")))return;let e=Be(this);e.finalize(),e.l!==void 0&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(P("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(P("properties"))){let t=this.properties,s=[...Ve(t),...je(t)];for(let i of s)this.createProperty(i,t[i])}let e=this[Symbol.metadata];if(e!==null){let t=litPropertyMetadata.get(e);if(t!==void 0)for(let[s,i]of t)this.elementProperties.set(s,i)}this._$Eh=new Map;for(let[t,s]of this.elementProperties){let i=this._$Eu(t,s);i!==void 0&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){let t=[];if(Array.isArray(e)){let s=new Set(e.flat(1/0).reverse());for(let i of s)t.unshift(Y(i))}else e!==void 0&&t.push(Y(e));return t}static _$Eu(e,t){let s=t.attribute;return s===!1?void 0:typeof s=="string"?s:typeof e=="string"?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),this.renderRoot!==void 0&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){let e=new Map,t=this.constructor.elementProperties;for(let s of t.keys())this.hasOwnProperty(s)&&(e.set(s,this[s]),delete this[s]);e.size>0&&(this._$Ep=e)}createRenderRoot(){let e=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return de(e,this.constructor.elementStyles),e}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,s){this._$AK(e,s)}_$ET(e,t){let s=this.constructor.elementProperties.get(e),i=this.constructor._$Eu(e,s);if(i!==void 0&&s.reflect===!0){let n=(s.converter?.toAttribute!==void 0?s.converter:q).toAttribute(t,s.type);this._$Em=e,n==null?this.removeAttribute(i):this.setAttribute(i,n),this._$Em=null}}_$AK(e,t){let s=this.constructor,i=s._$Eh.get(e);if(i!==void 0&&this._$Em!==i){let n=s.getPropertyOptions(i),r=typeof n.converter=="function"?{fromAttribute:n.converter}:n.converter?.fromAttribute!==void 0?n.converter:q;this._$Em=i;let d=r.fromAttribute(t,n.type);this[i]=d??this._$Ej?.get(i)??d,this._$Em=null}}requestUpdate(e,t,s,i=!1,n){if(e!==void 0){let r=this.constructor;if(i===!1&&(n=this[e]),s??=r.getPropertyOptions(e),!((s.hasChanged??ue)(n,t)||s.useDefault&&s.reflect&&n===this._$Ej?.get(e)&&!this.hasAttribute(r._$Eu(e,s))))return;this.C(e,t,s)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(e,t,{useDefault:s,reflect:i,wrapped:n},r){s&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,r??t??this[e]),n!==!0||r!==void 0)||(this._$AL.has(e)||(this.hasUpdated||s||(t=void 0),this._$AL.set(e,t)),i===!0&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[i,n]of this._$Ep)this[i]=n;this._$Ep=void 0}let s=this.constructor.elementProperties;if(s.size>0)for(let[i,n]of s){let{wrapped:r}=n,d=this[i];r!==!0||this._$AL.has(i)||d===void 0||this.C(i,void 0,n,d)}}let e=!1,t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(s=>s.hostUpdate?.()),this.update(t)):this._$EM()}catch(s){throw e=!1,this._$EM(),s}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(e){}firstUpdated(e){}};$.elementStyles=[],$.shadowRootOptions={mode:"open"},$[P("elementProperties")]=new Map,$[P("finalized")]=new Map,Ke?.({ReactiveElement:$}),(V.reactiveElementVersions??=[]).push("2.1.2");var te=globalThis,me=o=>o,j=te.trustedTypes,_e=j?j.createPolicy("lit-html",{createHTML:o=>o}):void 0,be="$lit$",E=`lit$${Math.random().toFixed(9).slice(2)}$`,Ee="?"+E,Fe=`<${Ee}>`,x=document,U=()=>x.createComment(""),N=o=>o===null||typeof o!="object"&&typeof o!="function",se=Array.isArray,We=o=>se(o)||typeof o?.[Symbol.iterator]=="function",G=`[ 	
+\f\r]`,O=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,fe=/-->/g,ve=/>/g,w=RegExp(`>|${G}(?:([^\\s"'>=/]+)(${G}*=${G}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),ge=/'/g,$e=/"/g,we=/^(?:script|style|textarea|title)$/i,ie=o=>(e,...t)=>({_$litType$:o,strings:e,values:t}),u=ie(1),pt=ie(2),ut=ie(3),S=Symbol.for("lit-noChange"),p=Symbol.for("lit-nothing"),ye=new WeakMap,A=x.createTreeWalker(x,129);function Ae(o,e){if(!se(o)||!o.hasOwnProperty("raw"))throw Error("invalid template strings array");return _e!==void 0?_e.createHTML(e):e}var Ye=(o,e)=>{let t=o.length-1,s=[],i,n=e===2?"<svg>":e===3?"<math>":"",r=O;for(let d=0;d<t;d++){let a=o[d],c,h,l=-1,_=0;for(;_<a.length&&(r.lastIndex=_,h=r.exec(a),h!==null);)_=r.lastIndex,r===O?h[1]==="!--"?r=fe:h[1]!==void 0?r=ve:h[2]!==void 0?(we.test(h[2])&&(i=RegExp("</"+h[2],"g")),r=w):h[3]!==void 0&&(r=w):r===w?h[0]===">"?(r=i??O,l=-1):h[1]===void 0?l=-2:(l=r.lastIndex-h[2].length,c=h[1],r=h[3]===void 0?w:h[3]==='"'?$e:ge):r===$e||r===ge?r=w:r===fe||r===ve?r=O:(r=w,i=void 0);let m=r===w&&o[d+1].startsWith("/>")?" ":"";n+=r===O?a+Fe:l>=0?(s.push(c),a.slice(0,l)+be+a.slice(l)+E+m):a+E+(l===-2?d:m)}return[Ae(o,n+(o[t]||"<?>")+(e===2?"</svg>":e===3?"</math>":"")),s]},M=class o{constructor({strings:e,_$litType$:t},s){let i;this.parts=[];let n=0,r=0,d=e.length-1,a=this.parts,[c,h]=Ye(e,t);if(this.el=o.createElement(c,s),A.currentNode=this.el.content,t===2||t===3){let l=this.el.content.firstChild;l.replaceWith(...l.childNodes)}for(;(i=A.nextNode())!==null&&a.length<d;){if(i.nodeType===1){if(i.hasAttributes())for(let l of i.getAttributeNames())if(l.endsWith(be)){let _=h[r++],m=i.getAttribute(l).split(E),b=/([.?@])?(.*)/.exec(_);a.push({type:1,index:n,name:b[2],strings:m,ctor:b[1]==="."?X:b[1]==="?"?Z:b[1]==="@"?Q:C}),i.removeAttribute(l)}else l.startsWith(E)&&(a.push({type:6,index:n}),i.removeAttribute(l));if(we.test(i.tagName)){let l=i.textContent.split(E),_=l.length-1;if(_>0){i.textContent=j?j.emptyScript:"";for(let m=0;m<_;m++)i.append(l[m],U()),A.nextNode(),a.push({type:2,index:++n});i.append(l[_],U())}}}else if(i.nodeType===8)if(i.data===Ee)a.push({type:2,index:n});else{let l=-1;for(;(l=i.data.indexOf(E,l+1))!==-1;)a.push({type:7,index:n}),l+=E.length-1}n++}}static createElement(e,t){let s=x.createElement("template");return s.innerHTML=e,s}};function k(o,e,t=o,s){if(e===S)return e;let i=s!==void 0?t._$Co?.[s]:t._$Cl,n=N(e)?void 0:e._$litDirective$;return i?.constructor!==n&&(i?._$AO?.(!1),n===void 0?i=void 0:(i=new n(o),i._$AT(o,t,s)),s!==void 0?(t._$Co??=[])[s]=i:t._$Cl=i),i!==void 0&&(e=k(o,i._$AS(o,e.values),i,s)),e}var J=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){let{el:{content:t},parts:s}=this._$AD,i=(e?.creationScope??x).importNode(t,!0);A.currentNode=i;let n=A.nextNode(),r=0,d=0,a=s[0];for(;a!==void 0;){if(r===a.index){let c;a.type===2?c=new D(n,n.nextSibling,this,e):a.type===1?c=new a.ctor(n,a.name,a.strings,this,e):a.type===6&&(c=new ee(n,this,e)),this._$AV.push(c),a=s[++d]}r!==a?.index&&(n=A.nextNode(),r++)}return A.currentNode=x,i}p(e){let t=0;for(let s of this._$AV)s!==void 0&&(s.strings!==void 0?(s._$AI(e,s,t),t+=s.strings.length-2):s._$AI(e[t])),t++}},D=class o{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,s,i){this.type=2,this._$AH=p,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=s,this.options=i,this._$Cv=i?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode,t=this._$AM;return t!==void 0&&e?.nodeType===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=k(this,e,t),N(e)?e===p||e==null||e===""?(this._$AH!==p&&this._$AR(),this._$AH=p):e!==this._$AH&&e!==S&&this._(e):e._$litType$!==void 0?this.$(e):e.nodeType!==void 0?this.T(e):We(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==p&&N(this._$AH)?this._$AA.nextSibling.data=e:this.T(x.createTextNode(e)),this._$AH=e}$(e){let{values:t,_$litType$:s}=e,i=typeof s=="number"?this._$AC(e):(s.el===void 0&&(s.el=M.createElement(Ae(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===i)this._$AH.p(t);else{let n=new J(i,this),r=n.u(this.options);n.p(t),this.T(r),this._$AH=n}}_$AC(e){let t=ye.get(e.strings);return t===void 0&&ye.set(e.strings,t=new M(e)),t}k(e){se(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,s,i=0;for(let n of e)i===t.length?t.push(s=new o(this.O(U()),this.O(U()),this,this.options)):s=t[i],s._$AI(n),i++;i<t.length&&(this._$AR(s&&s._$AB.nextSibling,i),t.length=i)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){let s=me(e).nextSibling;me(e).remove(),e=s}}setConnected(e){this._$AM===void 0&&(this._$Cv=e,this._$AP?.(e))}},C=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,s,i,n){this.type=1,this._$AH=p,this._$AN=void 0,this.element=e,this.name=t,this._$AM=i,this.options=n,s.length>2||s[0]!==""||s[1]!==""?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=p}_$AI(e,t=this,s,i){let n=this.strings,r=!1;if(n===void 0)e=k(this,e,t,0),r=!N(e)||e!==this._$AH&&e!==S,r&&(this._$AH=e);else{let d=e,a,c;for(e=n[0],a=0;a<n.length-1;a++)c=k(this,d[s+a],t,a),c===S&&(c=this._$AH[a]),r||=!N(c)||c!==this._$AH[a],c===p?e=p:e!==p&&(e+=(c??"")+n[a+1]),this._$AH[a]=c}r&&!i&&this.j(e)}j(e){e===p?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},X=class extends C{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===p?void 0:e}},Z=class extends C{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==p)}},Q=class extends C{constructor(e,t,s,i,n){super(e,t,s,i,n),this.type=5}_$AI(e,t=this){if((e=k(this,e,t,0)??p)===S)return;let s=this._$AH,i=e===p&&s!==p||e.capture!==s.capture||e.once!==s.once||e.passive!==s.passive,n=e!==p&&(s===p||i);i&&this.element.removeEventListener(this.name,this,s),n&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}},ee=class{constructor(e,t,s){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=s}get _$AU(){return this._$AM._$AU}_$AI(e){k(this,e)}};var qe=te.litHtmlPolyfillSupport;qe?.(M,D),(te.litHtmlVersions??=[]).push("3.3.3");var xe=(o,e,t)=>{let s=t?.renderBefore??e,i=s._$litPart$;if(i===void 0){let n=t?.renderBefore??null;s._$litPart$=i=new D(e.insertBefore(U(),n),n,void 0,t??{})}return i._$AI(o),i};var oe=globalThis,g=class extends ${constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=xe(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return S}};g._$litElement$=!0,g.finalized=!0,oe.litElementHydrateSupport?.({LitElement:g});var Ge=oe.litElementPolyfillSupport;Ge?.({LitElement:g});(oe.litElementVersions??=[]).push("4.2.2");var v={PAUSE:1,VOLUME_SET:4,VOLUME_MUTE:8,PREVIOUS_TRACK:16,NEXT_TRACK:32,TURN_ON:128,TURN_OFF:256,VOLUME_STEP:1024,SELECT_SOURCE:2048,STOP:4096,PLAY:16384},B=["up","down","left","right","select","back","home","menu"],L={generic:{label:"Generic remote",service:"remote.send_command",target:"remote",field:"command",keys:{up:"up",down:"down",left:"left",right:"right",select:"select",back:"back",home:"home",menu:"menu"}},apple_tv:{label:"Apple TV",service:"remote.send_command",target:"remote",field:"command",keys:{up:"up",down:"down",left:"left",right:"right",select:"select",back:"menu",home:"home",menu:"top_menu"}},android_tv:{label:"Android TV / Google TV / Shield (Android TV Remote)",service:"remote.send_command",target:"remote",field:"command",keys:{up:"DPAD_UP",down:"DPAD_DOWN",left:"DPAD_LEFT",right:"DPAD_RIGHT",select:"DPAD_CENTER",back:"BACK",home:"HOME",menu:"MENU"}},android_adb:{label:"Android TV / Fire TV (ADB)",service:"androidtv.adb_command",target:"player",field:"command",keys:{up:"UP",down:"DOWN",left:"LEFT",right:"RIGHT",select:"CENTER",back:"BACK",home:"HOME",menu:"MENU"}},roku:{label:"Roku",service:"remote.send_command",target:"remote",field:"command",keys:{up:"up",down:"down",left:"left",right:"right",select:"select",back:"back",home:"home",menu:"info"}},lg_webos:{label:"LG webOS TV",service:"webostv.button",target:"player",field:"button",keys:{up:"UP",down:"DOWN",left:"LEFT",right:"RIGHT",select:"ENTER",back:"BACK",home:"HOME",menu:"MENU"}},samsung_tv:{label:"Samsung TV",service:"remote.send_command",target:"remote",field:"command",keys:{up:"KEY_UP",down:"KEY_DOWN",left:"KEY_LEFT",right:"KEY_RIGHT",select:"KEY_ENTER",back:"KEY_RETURN",home:"KEY_HOME",menu:"KEY_MENU"}},sony_bravia:{label:"Sony Bravia",service:"remote.send_command",target:"remote",field:"command",keys:{up:"Up",down:"Down",left:"Left",right:"Right",select:"Confirm",back:"Return",home:"Home",menu:"Options"}},philips_tv:{label:"Philips TV",service:"remote.send_command",target:"remote",field:"command",keys:{up:"CursorUp",down:"CursorDown",left:"CursorLeft",right:"CursorRight",select:"Confirm",back:"Back",home:"Home",menu:"Options"}},kodi:{label:"Kodi",service:"kodi.call_method",target:"player",field:"method",keys:{up:"Input.Up",down:"Input.Down",left:"Input.Left",right:"Input.Right",select:"Input.Select",back:"Input.Back",home:"Input.Home",menu:"Input.ContextMenu"}}},Se={apple_tv:"apple_tv",androidtv_remote:"android_tv",androidtv:"android_adb",roku:"roku",webostv:"lg_webos",samsungtv:"samsung_tv",braviatv:"sony_bravia",philips_js:"philips_tv",kodi:"kodi"},Je=[["playing","buffering"],["paused"],["on","idle"]],ke={tv:"mdi:television",speaker:"mdi:speaker",receiver:"mdi:audio-video"},Xe=["off","standby","unavailable","unknown"];function Ce(o){let e=typeof o=="string"?{entity:o}:{...o};if(!e.entity||!String(e.entity).startsWith("media_player."))throw new Error(`Omni Remote: every item in "entities" needs a media_player entity (got ${JSON.stringify(o)})`);if(e.platform&&e.platform!=="auto"&&!L[e.platform])throw new Error(`Omni Remote: unknown platform "${e.platform}" for ${e.entity}. Use one of: auto, ${Object.keys(L).join(", ")}`);return e}function Te(o,e,t={}){if(!o||o.length===0)return null;let{pinned:s,tiers:i=Je}=t;if(s){let n=o.find(r=>r.entity===s);if(n)return n}for(let n of i){let r=o.find(d=>{let a=e&&e[d.entity];return a&&n.includes(a.state)});if(r)return r}return o[0]}function z(o,e){let t=e&&e.entities||{},s=t[o.entity],i=o.platform&&o.platform!=="auto"?o.platform:null;!i&&s&&Se[s.platform]&&(i=Se[s.platform]);let n=o.remote||null;if(!n&&s&&s.device_id){let c=Object.values(t).find(h=>h.device_id===s.device_id&&h.entity_id&&h.entity_id.startsWith("remote."));c&&(n=c.entity_id)}!i&&n&&(i="generic");let r=i?L[i]:null,d=r?{...r.keys,...o.commands||{}}:{...o.commands||{}},a=!!r&&(r.target==="player"||!!n);return{presetKey:i,preset:r,remote:n,keys:d,dpad:a}}function y(o,e){if(!o||!o.attributes)return!0;let t=o.attributes.supported_features;return t==null?!0:(t&e)!==0}function Re(o,e,t=z(o,e)){let s=e&&e.states||{},i=s[o.entity],n=s[o.volume_entity||o.entity],r=o.actions||{},d=new Set(o.hide||[]),a=new Set,c=(m,b)=>{!d.has(m)&&(b||r[m])&&a.add(m)};c("power",y(i,v.TURN_ON|v.TURN_OFF)||!!t.remote),c("previous",y(i,v.PREVIOUS_TRACK)),c("play_pause",y(i,v.PAUSE|v.PLAY)),c("next",y(i,v.NEXT_TRACK));let h=y(n,v.VOLUME_STEP|v.VOLUME_SET);c("volume_down",h),c("volume_up",h),c("mute",y(n,v.VOLUME_MUTE));let l=!!(n&&n.attributes&&typeof n.attributes.volume_level=="number");c("volume_set",l&&y(n,v.VOLUME_SET));let _=i&&i.attributes&&i.attributes.source_list;c("source",y(i,v.SELECT_SOURCE)&&Array.isArray(_)&&_.length>0);for(let m of B)c(m,t.dpad&&!!t.keys[m]);return a}function Pe(o){let[e,...t]=String(o).split(".");return{domain:e,service:t.join(".")}}function ne(o){let e=o&&(o.perform_action||o.service||o.action);return!e||!String(e).includes(".")?null:{...Pe(e),data:{...o.target||{},...o.data||{}}}}function Oe(o,e,t,s,i){if(!e)return null;if(e.actions&&e.actions[o])return ne(e.actions[o]);let n=t&&t.states||{},r=i||z(e,t),d=e.entity,a=e.volume_entity||d,c=(h,l)=>({domain:"media_player",service:h,data:l});switch(o){case"power":{let h=n[d],l=!h||Xe.includes(h.state),_=l?v.TURN_ON:v.TURN_OFF;return!y(h,_)&&r.remote?{domain:"remote",service:l?"turn_on":"turn_off",data:{entity_id:r.remote}}:c(l?"turn_on":"turn_off",{entity_id:d})}case"play_pause":return c("media_play_pause",{entity_id:d});case"previous":return c("media_previous_track",{entity_id:d});case"next":return c("media_next_track",{entity_id:d});case"volume_up":return c("volume_up",{entity_id:a});case"volume_down":return c("volume_down",{entity_id:a});case"mute":{let h=n[a],l=!!(h&&h.attributes&&h.attributes.is_volume_muted);return c("volume_mute",{entity_id:a,is_volume_muted:!l})}case"volume_set":{let h=Math.min(1,Math.max(0,Number(s)));return Number.isNaN(h)?null:c("volume_set",{entity_id:a,volume_level:h})}case"source":return s?c("select_source",{entity_id:d,source:s}):null;default:{if(!B.includes(o)||!r.dpad)return null;let h=r.keys[o];if(!h)return null;let l=r.preset.target==="player"?d:r.remote;return{...Pe(r.preset.service),data:{entity_id:l,[r.preset.field]:h}}}}}var Ze=[{name:"color",selector:{text:{}}},{type:"grid",name:"",schema:[{name:"show_chips",selector:{boolean:{}}},{name:"show_artwork",selector:{boolean:{}}},{name:"show_volume_slider",selector:{boolean:{}}},{name:"show_source",selector:{boolean:{}}}]}],Ue=[{name:"entity",required:!0,selector:{entity:{filter:{domain:"media_player"}}}},{type:"grid",name:"",schema:[{name:"name",selector:{text:{}}},{name:"icon",selector:{icon:{}}},{name:"color",selector:{text:{}}},{name:"platform",selector:{select:{mode:"dropdown",options:[{value:"auto",label:"Detect automatically"},...Object.entries(L).map(([o,e])=>({value:o,label:e.label}))]}}}]},{name:"remote",selector:{entity:{filter:{domain:"remote"}}}},{name:"volume_entity",selector:{entity:{filter:{domain:"media_player"}}}}],Qe=[{name:"entity",selector:{entity:{filter:{domain:"media_player"}}}}],et={color:"Accent color (for example #1db954)",show_chips:"Device chips",show_artwork:"Artwork background",show_volume_slider:"Volume slider",show_source:"Source picker",entity:"Media player",name:"Name",icon:"Icon",platform:"Remote type",remote:"Remote entity (d-pad)",volume_entity:"Send volume to"},tt={remote:"Leave empty to use the remote that belongs to the same device.",volume_entity:"Optional soundbar or receiver that should get volume and mute."},st={show_chips:!0,show_artwork:!0,show_volume_slider:!0,show_source:!0};function Ne(o){let e={};for(let[t,s]of Object.entries(o))s==null||s===""||t==="platform"&&s==="auto"||(e[t]=s);return e}var re=class extends g{constructor(){super(...arguments);F(this,"_label",t=>et[t.name]||t.name);F(this,"_helper",t=>tt[t.name])}static get properties(){return{hass:{attribute:!1},_config:{state:!0}}}setConfig(t){this._config=t,this._loadFormElements()}async _loadFormElements(){if(customElements.get("ha-form"))return;let t=customElements.get("hui-tile-card");t&&t.getConfigElement&&await t.getConfigElement()}get _devices(){return(this._config.entities||[]).map(t=>typeof t=="string"?{entity:t}:t)}_emit(t){this._config=t,this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:t},bubbles:!0,composed:!0}))}_setDevices(t){this._emit({...this._config,entities:t.map(s=>Object.keys(s).length===1?s.entity:s)})}_cardChanged(t){t.stopPropagation(),this._emit({...this._config,...Ne(t.detail.value)})}_deviceChanged(t,s){s.stopPropagation();let i=[...this._devices],n={...i[t]};for(let r of Ue.flatMap(d=>d.schema||[d]))delete n[r.name];i[t]={...n,...Ne(s.detail.value)},this._setDevices(i)}_addDevice(t){t.stopPropagation();let s=t.detail.value&&t.detail.value.entity;s&&this._setDevices([...this._devices,{entity:s}])}_move(t,s){let i=[...this._devices],n=t+s;n<0||n>=i.length||([i[t],i[n]]=[i[n],i[t]],this._setDevices(i))}_remove(t){let s=this._devices.filter((i,n)=>n!==t);this._setDevices(s)}render(){if(!this.hass||!this._config)return p;let t=this._devices;return u`
+      <p class="hint">
+        Add your media players in priority order: the first one that is playing gets the remote.
+        Can't find a device? Open Settings, Devices &amp; services, Entities and search for
+        <code>media_player.</code> or <code>remote.</code>
+      </p>
+
+      ${t.map((s,i)=>u`
+          <div class="device">
+            <div class="device-head">
+              <span>${i+1}. ${s.name||this.hass.states[s.entity]&&this.hass.states[s.entity].attributes.friendly_name||s.entity}</span>
+              <span class="actions">
+                <button title="Move up" ?disabled=${i===0} @click=${()=>this._move(i,-1)}><ha-icon icon="mdi:arrow-up"></ha-icon></button>
+                <button title="Move down" ?disabled=${i===t.length-1} @click=${()=>this._move(i,1)}><ha-icon icon="mdi:arrow-down"></ha-icon></button>
+                <button title="Remove" @click=${()=>this._remove(i)}><ha-icon icon="mdi:delete"></ha-icon></button>
+              </span>
             </div>
-            <div class="info">
-              <div class="name">${this._deviceName(t)}</div>
+            <ha-form .hass=${this.hass} .data=${{platform:"auto",...s}} .schema=${Ue}
+              .computeLabel=${this._label} .computeHelper=${this._helper}
+              @value-changed=${n=>this._deviceChanged(i,n)}></ha-form>
+          </div>
+        `)}
+
+      <div class="device add">
+        <div class="device-head"><span>Add a media player</span></div>
+        <ha-form .hass=${this.hass} .data=${{}} .schema=${Qe} .computeLabel=${this._label}
+          @value-changed=${this._addDevice}></ha-form>
+      </div>
+
+      <h4>Card options</h4>
+      <ha-form .hass=${this.hass} .data=${{...st,...this._config}} .schema=${Ze}
+        .computeLabel=${this._label} @value-changed=${this._cardChanged}></ha-form>
+      <p class="hint">Custom buttons, per-button actions and key overrides are available in the YAML editor.</p>
+    `}static get styles(){return R`
+      .hint {
+        color: var(--secondary-text-color);
+        font-size: 0.9em;
+      }
+      .device {
+        border: 1px solid var(--divider-color);
+        border-radius: 8px;
+        padding: 8px 12px 12px;
+        margin-bottom: 12px;
+      }
+      .device-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .actions button {
+        background: none;
+        border: none;
+        color: var(--primary-text-color);
+        cursor: pointer;
+      }
+      .actions button[disabled] {
+        opacity: 0.3;
+        cursor: default;
+      }
+    `}};customElements.get("omni-remote-card-editor")||customElements.define("omni-remote-card-editor",re);var it="1.1.0",ot=400,nt=150,rt=new Set(["volume_up","volume_down","up","down","left","right"]),ae=class extends g{static get properties(){return{hass:{attribute:!1},_config:{state:!0},_pinned:{state:!0}}}static getConfigElement(){return document.createElement("omni-remote-card-editor")}static getStubConfig(e){let t=e&&e.states||{},s=Object.keys(t).filter(i=>i.startsWith("media_player.")).sort((i,n)=>(t[i].state==="playing"?-1:0)-(t[n].state==="playing"?-1:0)).slice(0,3);return{entities:s.length?s:["media_player.living_room_tv"]}}setConfig(e){if(!e||!Array.isArray(e.entities)||e.entities.length===0)throw new Error('Omni Remote: add at least one media player under "entities"');this._config={show_chips:!0,show_artwork:!0,show_volume_slider:!0,show_source:!0,...e,devices:e.entities.map(Ce)},this._pinned&&!this._config.devices.some(t=>t.entity===this._pinned)&&(this._pinned=void 0)}getCardSize(){return 7}disconnectedCallback(){super.disconnectedCallback(),this._stopRepeat()}get _active(){return!this._config||!this.hass?null:Te(this._config.devices,this.hass.states,{pinned:this._pinned})}_call(e){e&&(this.hass.callService(e.domain,e.service,e.data),navigator.vibrate&&navigator.vibrate(15))}_press(e,t){this._call(Oe(e,this._active,this.hass,t))}_pointerDown(e,t){t.button!==void 0&&t.button!==0||(t.preventDefault(),this._press(e),rt.has(e)&&(this._stopRepeat(),this._repeatTimer=setTimeout(()=>{this._repeatTimer=setInterval(()=>this._press(e),nt)},ot)))}_stopRepeat(){clearTimeout(this._repeatTimer),clearInterval(this._repeatTimer),this._repeatTimer=void 0}_togglePin(e){this._pinned=this._pinned===e?void 0:e}_moreInfo(){let e=this._active;if(!e)return;let t=new Event("hass-more-info",{bubbles:!0,composed:!0});t.detail={entityId:e.entity},this.dispatchEvent(t)}_deviceName(e){let t=this.hass.states[e.entity];return e.name||t&&t.attributes.friendly_name||e.entity}_deviceIcon(e){let t=this.hass.states[e.entity],s=t&&t.attributes.device_class;return e.icon||t&&t.attributes.icon||ke[s]||"mdi:remote"}_button(e,t,s,i,n=""){return e.has(t)?u`
+      <button class="btn ${n}" title=${i} aria-label=${i}
+        @pointerdown=${r=>this._pointerDown(t,r)}
+        @pointerup=${this._stopRepeat} @pointerleave=${this._stopRepeat} @pointercancel=${this._stopRepeat}
+        @click=${r=>r.detail===0&&this._press(t)}>
+        <ha-icon .icon=${s}></ha-icon>
+      </button>
+    `:p}_row(e,t,s,i){return t.some(n=>e.has(n))?u`<div class="row ${s}">${i()}</div>`:p}_renderMissing(){let e=this._config.devices.filter(t=>!this.hass.states[t.entity]);return e.length?u`
+      <div class="warning">
+        Not found: ${e.map(t=>t.entity).join(", ")}.
+        Check the exact id under Settings, Devices &amp; services, Entities.
+      </div>
+    `:p}_renderChips(e){return!this._config.show_chips||this._config.devices.length<2?p:u`
+      <div class="chips">
+        ${this._config.devices.map(t=>{let s=this.hass.states[t.entity],i=s&&["playing","buffering"].includes(s.state),n=this._pinned===t.entity,r=["chip",t.entity===e.entity?"active":"",i?"live":""].join(" ");return u`
+            <button class=${r} style="--chip-color: ${t.color||"var(--primary-color)"}"
+              title=${n?"Tap to return to automatic":"Tap to lock the remote to this device"}
+              @click=${()=>this._togglePin(t.entity)}>
+              <ha-icon .icon=${this._deviceIcon(t)}></ha-icon>
+              <span>${this._deviceName(t)}</span>
+              ${n?u`<ha-icon class="lock" icon="mdi:lock"></ha-icon>`:p}
+            </button>
+          `})}
+      </div>
+    `}_renderExtras(e,t,s){let i=this._config.show_volume_slider&&t.has("volume_set"),n=this._config.show_source&&t.has("source");if(!i&&!n)return p;let r=this.hass.states[e.volume_entity||e.entity],d=Math.round((r&&r.attributes.volume_level||0)*100);return u`
+      <div class="extras">
+        ${i?u`
+              <label class="slider">
+                <ha-icon icon="mdi:volume-medium"></ha-icon>
+                <input type="range" min="0" max="100" .value=${String(d)} aria-label="Volume"
+                  @change=${a=>this._press("volume_set",a.target.value/100)}>
+                <span class="level">${d}</span>
+              </label>
+            `:p}
+        ${n?u`
+              <label class="source">
+                <ha-icon icon="mdi:import"></ha-icon>
+                <select aria-label="Source" @change=${a=>this._press("source",a.target.value)}>
+                  ${s.source?p:u`<option value="" selected disabled>Source</option>`}
+                  ${s.source_list.map(a=>u`<option value=${a} ?selected=${a===s.source}>${a}</option>`)}
+                </select>
+              </label>
+            `:p}
+      </div>
+    `}_renderCustomButtons(e){let t=[...e.buttons||[],...this._config.buttons||[]];return t.length?u`
+      <div class="row custom">
+        ${t.map(s=>u`
+            <button class="btn small" title=${s.name||""} aria-label=${s.name||s.icon||"Action"}
+              @click=${()=>this._call(ne(s))}>
+              ${s.icon?u`<ha-icon .icon=${s.icon}></ha-icon>`:u`<span>${s.name}</span>`}
+            </button>
+          `)}
+      </div>
+    `:p}render(){if(!this._config||!this.hass)return p;let e=this._active,t=this.hass.states[e.entity],s=t?t.state:"unavailable",i=t&&t.attributes||{},n=!!t&&!["off","standby","unavailable","unknown"].includes(s),r=e.color||this._config.color||"var(--primary-color)",d=this._config.show_artwork&&n&&i.entity_picture,a=i.media_title,c=i.media_artist||i.media_series_title||i.app_name||i.source,h=z(e,this.hass),l=Re(e,this.hass,h),_=this.hass.states[e.volume_entity||e.entity],m=_&&_.attributes.is_volume_muted,b=s==="playing"||s==="buffering",f=(...K)=>this._button(l,...K);return u`
+      <ha-card style="--omni-accent: ${r}">
+        ${d?u`<div class="art" style="background-image:url('${i.entity_picture}')"></div>`:p}
+        <div class="content">
+          ${this._renderMissing()}
+          <div class="header">
+            <div class="badge ${n?"on":""}" @click=${this._moreInfo}>
+              <ha-icon .icon=${this._deviceIcon(e)}></ha-icon>
+            </div>
+            <div class="info" @click=${this._moreInfo}>
+              <div class="name">${this._deviceName(e)}</div>
               <div class="media">
-                ${a?_`<span class="title">${a}</span>`:_`<span class="state">${i}</span>`}
-                ${h?_`<span class="sub">${h}</span>`:""}
+                ${a?u`<span class="title">${a}</span>`:u`<span class="state">${s}</span>`}
+                ${c?u`<span class="sub">${c}</span>`:p}
               </div>
             </div>
-            <button class="btn power ${n?"on":""}" aria-label="Power"
-              @click=${u=>this._press("power",u)}>
-              <ha-icon icon="mdi:power"></ha-icon>
-            </button>
+            ${f("power","mdi:power","Power",`power ${n?"on":""}`)}
           </div>
 
-          ${this._config.show_chips&&this._config.devices.length>1?_`
-                <div class="chips">
-                  ${this._config.devices.map(u=>{let X=this.hass.states[u.entity],At=X&&["playing","buffering"].includes(X.state),wt=["chip",u.entity===t.entity?"active":"",this._pinned===u.entity?"pinned":"",At?"live":""].join(" ");return _`
-                      <button class=${wt} style="--chip-color: ${u.color||"var(--primary-color)"}"
-                        title=${this._pinned===u.entity?"Tap to return to automatic":"Tap to lock the remote to this device"}
-                        @click=${()=>this._togglePin(u.entity)}>
-                        <ha-icon .icon=${this._deviceIcon(u)}></ha-icon>
-                        <span>${this._deviceName(u)}</span>
-                        ${this._pinned===u.entity?_`<ha-icon class="lock" icon="mdi:lock"></ha-icon>`:""}
-                      </button>
-                    `})}
-                </div>
-              `:""}
+          ${this._renderChips(e)}
 
-          ${d?_`
+          ${B.some(K=>l.has(K))?u`
                 <div class="dpad">
-                  ${this._button("up","mdi:chevron-up","Up","up")}
-                  ${this._button("left","mdi:chevron-left","Left","left")}
-                  ${this._button("select","mdi:circle-medium","Select","ok")}
-                  ${this._button("right","mdi:chevron-right","Right","right")}
-                  ${this._button("down","mdi:chevron-down","Down","down")}
+                  ${f("up","mdi:chevron-up","Up","up")}
+                  ${f("left","mdi:chevron-left","Left","left")}
+                  ${f("select","mdi:circle-medium","Select","ok")}
+                  ${f("right","mdi:chevron-right","Right","right")}
+                  ${f("down","mdi:chevron-down","Down","down")}
                 </div>
-                <div class="row">
-                  ${this._button("back","mdi:arrow-left","Back")}
-                  ${this._button("home","mdi:home","Home")}
-                </div>
-              `:""}
+                ${this._row(l,["back","home","menu"],"",()=>u`
+                  ${f("back","mdi:arrow-left","Back")}
+                  ${f("home","mdi:home","Home")}
+                  ${f("menu","mdi:menu","Menu")}
+                `)}
+              `:p}
 
-          <div class="row transport">
-            ${this._button("previous","mdi:skip-previous","Previous")}
-            ${this._button("play_pause",f?"mdi:pause":"mdi:play","Play or pause","primary")}
-            ${this._button("next","mdi:skip-next","Next")}
-          </div>
+          ${this._row(l,["previous","play_pause","next"],"transport",()=>u`
+            ${f("previous","mdi:skip-previous","Previous")}
+            ${f("play_pause",b?"mdi:pause":"mdi:play","Play or pause","primary")}
+            ${f("next","mdi:skip-next","Next")}
+          `)}
+          ${this._row(l,["volume_down","mute","volume_up"],"volume",()=>u`
+            ${f("volume_down","mdi:volume-minus","Volume down")}
+            ${f("mute",m?"mdi:volume-off":"mdi:volume-high","Mute",m?"muted":"")}
+            ${f("volume_up","mdi:volume-plus","Volume up")}
+          `)}
 
-          <div class="row volume">
-            ${this._button("volume_down","mdi:volume-minus","Volume down")}
-            ${this._button("mute",m?"mdi:volume-off":"mdi:volume-high","Mute",m?"muted":"")}
-            ${this._button("volume_up","mdi:volume-plus","Volume up")}
-          </div>
+          ${this._renderExtras(e,l,i)}
+          ${this._renderCustomButtons(e)}
         </div>
       </ha-card>
-    `}static get styles(){return I`
+    `}static get styles(){return R`
       ha-card {
         --omni-accent: var(--primary-color);
         position: relative;
@@ -92,11 +190,16 @@ var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
         flex-direction: column;
         gap: 16px;
       }
+      .warning {
+        font-size: 0.85em;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--warning-color, #ffa600) 18%, transparent);
+      }
       .header {
         display: flex;
         align-items: center;
         gap: 12px;
-        cursor: pointer;
       }
       .badge {
         flex: none;
@@ -105,6 +208,7 @@ var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
         border-radius: 50%;
         display: grid;
         place-items: center;
+        cursor: pointer;
         background: color-mix(in srgb, var(--omni-accent) 15%, transparent);
         color: var(--secondary-text-color);
         transition: background 0.4s ease, color 0.4s ease;
@@ -116,6 +220,7 @@ var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
       .info {
         flex: 1;
         min-width: 0;
+        cursor: pointer;
       }
       .name {
         font-size: 1.1em;
@@ -179,6 +284,8 @@ var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
         display: grid;
         place-items: center;
         cursor: pointer;
+        touch-action: manipulation;
+        user-select: none;
         transition: background 0.2s ease, transform 0.1s ease, color 0.4s ease;
         -webkit-tap-highlight-color: transparent;
       }
@@ -205,9 +312,19 @@ var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
       .btn.muted {
         color: var(--error-color, #db4437);
       }
+      .btn.small {
+        width: 44px;
+        height: 44px;
+        font: inherit;
+        font-size: 0.75em;
+      }
       .row {
         display: flex;
         justify-content: space-evenly;
+      }
+      .custom {
+        flex-wrap: wrap;
+        gap: 8px;
       }
       .dpad {
         display: grid;
@@ -225,7 +342,36 @@ var M=globalThis,T=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
       .dpad .ok { grid-area: 2 / 2; }
       .dpad .right { grid-area: 2 / 3; }
       .dpad .down { grid-area: 3 / 2; }
-    `}};customElements.get("omni-remote-card")||(customElements.define("omni-remote-card",Q),window.customCards=window.customCards||[],window.customCards.push({type:"omni-remote-card",name:"Omni Remote",description:"One remote that follows whichever media player is active.",preview:!0}),console.info(`%c OMNI-REMOTE-CARD %c ${It} `,"background:#222;color:#fff","background:#03a9f4;color:#fff"));
+      .extras {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .extras label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--secondary-text-color);
+      }
+      .slider input {
+        flex: 1;
+        accent-color: var(--omni-accent);
+      }
+      .level {
+        width: 2.5em;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .source select {
+        flex: 1;
+        padding: 6px 8px;
+        border-radius: 8px;
+        border: 1px solid var(--divider-color);
+        background: var(--card-background-color, transparent);
+        color: var(--primary-text-color);
+        font: inherit;
+      }
+    `}};customElements.get("omni-remote-card")||(customElements.define("omni-remote-card",ae),window.customCards=window.customCards||[],window.customCards.push({type:"omni-remote-card",name:"Omni Remote",description:"One remote that follows whichever media player is active.",preview:!0,documentationURL:"https://github.com/PeterSlijkhuis/Omni-Remote"}),console.info(`%c OMNI-REMOTE-CARD %c ${it} `,"background:#222;color:#fff","background:#03a9f4;color:#fff"));
 /*! Bundled license information:
 
 @lit/reactive-element/css-tag.js:

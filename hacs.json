@@ -1,5 +1,6 @@
 {
   "name": "Omni Remote Card",
   "filename": "omni-remote-card.js",
+  "homeassistant": "2024.1.0",
   "render_readme": true
 }
